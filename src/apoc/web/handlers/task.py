@@ -74,13 +74,18 @@ class EditTaskHandler(BaseHandler):
         db_session = self.get_db_session()
         task = Task.get(db_session, task_id)
 
+        user = utils.get_user(self, db_session)
+        
+        if not user:
+            self.redirect('/login')
+
         assign_ids = []
         for u in task.users:
             assign_ids.append(u.id)
 
         data = dict(
             task = task,
-            user = utils.get_user(self, db_session),
+            user = user,
             users = User.gets(db_session),
             assign_ids = assign_ids,
             )
